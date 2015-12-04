@@ -7,3 +7,5 @@ results/
 DRAMSim
 libdramsim.a
 libdramsim.so
+
+.DS_Store
