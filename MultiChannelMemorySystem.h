@@ -50,6 +50,7 @@ class MultiChannelMemorySystem : public SimulatorObject
 			bool addTransaction(bool isWrite, uint64_t addr);
 			bool willAcceptTransaction(); 
 			bool willAcceptTransaction(uint64_t addr); 
+            bool allTransactionsFinished();
 			void update();
 			void printStats(bool finalStats=false);
 			ostream &getLogFile();

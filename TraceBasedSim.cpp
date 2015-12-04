@@ -149,6 +149,7 @@ void usage()
 	cout << "\t-p, --pwd=DIRECTORY\t\tSet the working directory (i.e. usually DRAMSim directory where ini/ and results/ are)"<<endl;
 	cout << "\t-S, --size=# \t\t\tSize of the memory system in megabytes [default=2048M]"<<endl;
 	cout << "\t-n, --notiming \t\t\tDo not use the clock cycle information in the trace file"<<endl;
+	cout << "\t-f, --fulltrace \t\t\tRun the number of clock cycles necessary to complete the trace"<<endl;
 	cout << "\t-v, --visfile \t\t\tVis output filename"<<endl;
 }
 #endif
@@ -378,6 +379,7 @@ int main(int argc, char **argv)
 	string *visFilename = NULL;
 	unsigned megsOfMemory=2048;
 	bool useClockCycle=true;
+	bool runToCompletion=false;
 	
 	IniReader::OverrideMap *paramOverrides = NULL; 
 
@@ -395,13 +397,15 @@ int main(int argc, char **argv)
 			{"numcycles",  required_argument,	0, 'c'},
 			{"option",  required_argument,	0, 'o'},
 			{"quiet",  no_argument, &SHOW_SIM_OUTPUT, 'q'},
+			{"notiming",  no_argument, 0, 'n'},
+			{"fulltrace",  no_argument, 0, 'f'},
 			{"help", no_argument, 0, 'h'},
 			{"size", required_argument, 0, 'S'},
 			{"visfile", required_argument, 0, 'v'},
 			{0, 0, 0, 0}
 		};
 		int option_index=0; //for getopt
-		c = getopt_long (argc, argv, "t:s:c:d:o:p:S:v:qn", long_options, &option_index);
+		c = getopt_long (argc, argv, "t:s:c:d:o:p:S:v:qnf", long_options, &option_index);
 		if (c == -1)
 		{
 			break;
@@ -445,6 +449,9 @@ int main(int argc, char **argv)
 			break;
 		case 'q':
 			SHOW_SIM_OUTPUT=false;
+			break;
+		case 'f':
+			runToCompletion=true;
 			break;
 		case 'n':
 			useClockCycle=false;
@@ -541,7 +548,7 @@ int main(int argc, char **argv)
 		exit(0);
 	}
 
-	for (size_t i=0;i<numCycles;i++)
+	for (size_t i=0; runToCompletion || i<numCycles;i++)
 	{
 		if (!pendingTrans)
 		{
@@ -601,6 +608,15 @@ int main(int argc, char **argv)
 		}
 
 		(*memorySystem).update();
+
+        //checking if the it has run to completion
+        if(runToCompletion && !pendingTrans && traceFile.eof()){
+            if((*memorySystem).allTransactionsFinished()){
+                runToCompletion = false; //isn't necessary just adding for funsies
+                //want to break out of the loop, as it is now basically a while(true) loop
+                break;
+            }
+        }
 	}
 
 	traceFile.close();

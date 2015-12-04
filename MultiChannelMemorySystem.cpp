@@ -474,6 +474,17 @@ bool MultiChannelMemorySystem::willAcceptTransaction()
 	return true; 
 }
 
+bool MultiChannelMemorySystem::allTransactionsFinished()
+{
+	for (size_t c=0; c<NUM_CHANS; c++) {
+		if (!channels[c]->AllTransactionsFinished())
+		{
+			return false; 
+		}
+	}
+	return true; 
+}
+
 
 
 void MultiChannelMemorySystem::printStats(bool finalStats) {

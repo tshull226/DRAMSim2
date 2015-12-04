@@ -176,6 +176,11 @@ bool MemorySystem::WillAcceptTransaction()
 	return memoryController->WillAcceptTransaction();
 }
 
+bool MemorySystem::AllTransactionsFinished()
+{
+	return memoryController->AllTransactionsFinished();
+}
+
 bool MemorySystem::addTransaction(bool isWrite, uint64_t addr)
 {
 	TransactionType type = isWrite ? DATA_WRITE : DATA_READ;

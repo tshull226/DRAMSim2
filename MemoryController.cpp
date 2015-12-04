@@ -764,6 +764,11 @@ bool MemoryController::WillAcceptTransaction()
 	return transactionQueue.size() < TRANS_QUEUE_DEPTH;
 }
 
+bool MemoryController::AllTransactionsFinished()
+{
+	return transactionQueue.size() == 0;
+}
+
 //allows outside source to make request of memory system
 bool MemoryController::addTransaction(Transaction *trans)
 {

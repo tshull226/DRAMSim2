@@ -62,6 +62,7 @@ public:
 
 	bool addTransaction(Transaction *trans);
 	bool WillAcceptTransaction();
+	bool AllTransactionsFinished();
 	void returnReadData(const Transaction *trans);
 	void receiveFromBus(BusPacket *bpacket);
 	void attachRanks(vector<Rank *> *ranks);
